@@ -394,22 +394,26 @@ function checkNoveny() {
 
      
     	function goBack() {
-    // Minden elem elrejtése
-    	    document.getElementById("mainMenu").style.display = "block";
-            document.getElementById("kepletekSubMenu").style.display = "none";
-            document.getElementById("novenyfelismeresSubMenu").style.display = "none";
-	    document.getElementById("szamolasSubMenu").style.display = "none"; // ⬅️ Hiányzott
-    	    document.getElementById("tablaSubMenu").style.display = "none";
-            document.getElementById("sketchem-container").style.display = "none";
-            document.getElementById("kepfelismeres-container").style.display = "none";
-	    document.getElementById("szamolas-container").style.display = "none";
-    	    document.getElementById("tabla-container").style.display = "none";
-	    document.getElementById("fitokemia_altalanos-container").style.display = "none";
-   	    document.getElementById("fitokemia-container").style.display = "none";
-   	    document.getElementById("fitoanalitika-container").style.display = "none";
-	    document.getElementById("makroszkopikus-container").style.display = "none";
-	    document.getElementById("mikroszkopikus-container").style.display = "none";
-	}
+    // Minden játék és almenü elrejtése
+    document.getElementById("kepfelismeres-container").style.display = "none";
+    document.getElementById("makroszkopikus-container").style.display = "none";
+    document.getElementById("mikroszkopikus-container").style.display = "none";
+    document.getElementById("kepletekSubMenu").style.display = "none";
+    document.getElementById("novenyfelismeresSubMenu").style.display = "none";
+    
+    // Főmenü megjelenítése
+    document.getElementById("mainMenu").style.display = "block";
+    
+    // Input mezők ürítése
+    document.getElementById("name-input").value = "";
+    document.getElementById("name-output").innerHTML = "";
+    document.getElementById("magyar-drog").value = "";
+    document.getElementById("latin-drog").value = "";
+    document.getElementById("latin-noveny").value = "";
+    document.getElementById("csalad-noveny").value = "";
+    document.getElementById("noveny-eredmeny").innerHTML = "";
+    document.getElementById("mikro-eredmeny").innerHTML = "";
+}
         
         
 
