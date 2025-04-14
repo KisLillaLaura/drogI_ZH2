@@ -102,11 +102,18 @@
 
 
     
-
+	
     <div id="kepfelismeres-container">
     	<h2>Mi a képen látható molekula neve?</h2>
     	<img id="molekula-kep" src="" alt="Molekula képe" style="max-width: 300px; margin: 20px auto; display: block;">
     	<input type="text" id="name-input" placeholder="Írd be a molekula nevét">
+	<div style="margin: 15px 0;">
+    	    <label for="group-select">Molekula csoportja:</label>
+    	    <select id="group-select">
+                <option value="">Válassz csoportot...</option>
+    	    </select>
+		
+	</div>
     	<br><br>
     	<button onclick="checkName()">✅ Ellenőrzés</button>
     	<button onclick="goBack()">🔙 Vissza</button>
@@ -160,7 +167,7 @@
 
     <script>
 	
-           
+const osszesCsoport = [...new Set(Object.values(molekulaAdatok).map(m => m.csoport))];           
 const molekulaAdatok = {
     "rozmaringsav": { csoport: "Kávésavszármazékok", image: "rozmaringsav.jpg" },
     "klorogénsav": { csoport: "Kávésavszármazékok", image: "klorogénsav.jpg" },
@@ -317,22 +324,35 @@ function startFormulaRecognition() {
 }
 
 // Új függvények a képfelismeréshez
+
 function newMoleculeRecognition() {
     const moleculeNames = Object.keys(molekulaAdatok);
     currentMolecule = moleculeNames[Math.floor(Math.random() * moleculeNames.length)];
     document.getElementById("molekula-kep").src = "DROGIZH2MOL/" + molekulaAdatok[currentMolecule].image;
+    
+    // Csoport legördülő feltöltése
+    const groupSelect = document.getElementById("group-select");
+    groupSelect.innerHTML = '<option value="">Válassz csoportot...</option>' + 
+        osszesCsoport.map(csoport => `<option value="${csoport}">${csoport}</option>`).join('');
 }
 
 function checkName() {
     const answer = document.getElementById("name-input").value.trim();
-    const result = (answer.toLowerCase() === currentMolecule.toLowerCase()) 
-        ? "✔️ Helyes" 
-        : `❌ Helytelen (helyes válasz: ${currentMolecule})`;
+    const selectedGroup = document.getElementById("group-select").value;
+    const correctGroup = molekulaAdatok[currentMolecule].csoport;
+    
+    let result = "";
+    const nameCorrect = answer.toLowerCase() === currentMolecule.toLowerCase();
+    const groupCorrect = selectedGroup === correctGroup;
+    
+    result += `Név: ${nameCorrect ? "✔️ Helyes" : `❌ Helytelen (helyes: ${currentMolecule})`}<br>`;
+    result += `Csoport: ${groupCorrect ? "✔️ Helyes" : `❌ Helytelen (helyes: ${correctGroup})`}`;
+    
     document.getElementById("name-output").innerHTML = result;
 }
-
 function retryRecognition() {
     document.getElementById("name-input").value = "";
+    document.getElementById("group-select").value = "";
     document.getElementById("name-output").innerHTML = "";
 }
 
