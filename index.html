@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Növényismereti Játék</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .menu, .submenu {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        .submenu {
+            display: none;
+        }
+        #sketchem-container {
+            display: none;
+        }
+	#kepfelismeres-container {
+    	    display: none;
+	}
+	#szamolas-container, #tabla-container {
+    	    display: none;
+	}
+	/* Ideiglenes elrejtés */
+	#szamolasSubMenu, 
+	#szamolas-container,
+	#tabla-container, 
+	#tablaSubMenu,
+	#fitokemia_altalanos-container,
+	#fitokemia-container,
+	#fitoanalitika-container {
+    	display: none !important;
+	}
+	/* Táblázatos játékok stílusa */
+	#tabla-container, 
+	#fitokemia_altalanos-container,
+	#fitokemia-container,
+	#fitoanalitika-container {
+   	 max-width: 900px;
+   	 margin: 0 auto;
+	}
+
+	table {
+  	  width: 100%;
+ 	   margin: 20px 0;
+ 	   border-collapse: collapse;
+	}
+
+	th, td {
+ 	   padding: 12px;
+ 	   text-align: left;
+ 	   border: 1px solid #ddd;
+	}
+
+	th {
+  	  background-color: #f8f9fa;
+  	  font-weight: bold;
+	}
+
+	select {
+    	width: 100%;
+    	padding: 8px;
+   	 border-radius: 4px;
+   	 border: 1px solid #ccc;
+	}
+    </style>
+</head>
+<body>
+    <h1>Üdvözöllek a Növényismereti Játékban!</h1>
+    <p>Válassz egy feladattípust:</p>
+    
+    <div class="menu" id="mainMenu">
+        <button onclick="showSubMenu('novenyfelismeres')">Növényfelismerés</button>
+        <button onclick="showSubMenu('kepletek')">Képletek</button>
+	
+    </div>
+
+    <!-- Almenük -->
+
+    <div class="submenu" id="novenyfelismeresSubMenu">
+        <h2>Növényfelismerés</h2>
+        <button onclick="startMakroszkopikusJatek()">Makroszkópikus felismerés</button>
+        <button onclick="startMikroszkopikusJatek()">Mikroszkópikus felismerés</button>
+        <button onclick="goBack()">🔙 Vissza</button>
+    </div>
+	
+    <div class="submenu" id="kepletekSubMenu">
+        <h2>Képletek</h2>
+        <button onclick="startFormulaRecognition()">Képlet felismerés</button>
+        <button onclick="startFormulaDrawing()">Képlet rajzolás</button>
+        <button onclick="goBack()">🔙 Vissza</button>
+    </div>
+    <!-- Számolási feladatok almenü -->
+    <div class="submenu" id="szamolasSubMenu">
+        <h2>Számolási feladatok</h2>
+        <button onclick="startSzamolas('el_nem_szappanosithato')">El nem szappanosítható rész tartalmi meghatározása</button>
+        <button onclick="startSzamolas('aszkorbinsav')">Aszkorbinsav tartalmi meghatározása</button>
+        <button onclick="goBack()">🔙 Vissza</button>
+    </div>
+
+<!-- Táblázatkitöltés almenü -->
+    <div class="submenu" id="tablaSubMenu">
+        <h2>Táblázatkitöltés</h2>
+        <button onclick="startTabla('fitokemia')">Drogok fitokémiája</button>
+        <button onclick="startTabla('fitoanalitika')">Általános fitoanalitika</button>
+        <button onclick="startTabla('fitokemia_altalanos')">Általános fitokémia</button>
+        <button onclick="goBack()">🔙 Vissza</button>
+    </div>
+
+    <div id="sketchem-container">
+        <h2>Rajzold le az alábbi molekulát:</h2>
+        <h3 id="molekula-name"></h3>
+        <p><button onclick="openSketChem()">🖌 SketChem megnyitása</button></p>
+        <p>Miután elkészültél, exportáld a SMILES kódot (felső ikonok, lefele nyilas téglalap; .smi .smiles formátum), és másold be ide:</p>
+        <input type="text" id="smiles-input" placeholder="Illeszd be a SMILES kódot">
+        <br>
+        <p>Válaszd ki a csoportot:</p>
+        <select id="csoport-select">
+            <option value="Szénhidrátok">Szénhidrátok</option>
+            <option value="Lipidek">Lipidek</option>
+            <option value="Növényi savak">Növényi savak</option>
+        </select>
+        <br>
+        <button onclick="exportSMILES()">✅ Ellenőrzés</button>
+        <button onclick="goBack()">🔙 Vissza</button>
+        <p id="smiles-output"></p>
+        <button onclick="newMolecule()">Új molekula</button>
+        <button onclick="retry()">Újrapróbálás</button>
+    </div>
+
+    <div id="kepfelismeres-container">
+    	<h2>Mi a képen látható molekula neve?</h2>
+    	<img id="molekula-kep" src="" alt="Molekula képe" style="max-width: 300px; margin: 20px auto; display: block;">
+    	<input type="text" id="name-input" placeholder="Írd be a molekula nevét">
+    	<br><br>
+    	<button onclick="checkName()">✅ Ellenőrzés</button>
+    	<button onclick="goBack()">🔙 Vissza</button>
+    	<p id="name-output"></p>
+    	<button onclick="newMoleculeRecognition()">Új molekula</button>
+    	<button onclick="retryRecognition()">Újrapróbálás</button>
+    </div>
+	
+    <div id="makroszkopikus-container" class="submenu">
+    	<h2>Makroszkópikus növényfelismerés</h2>
+    	<img id="noveny-kep" src="" alt="Növény képe" style="max-width: 400px; margin: 20px auto; display: block;">
+    	<div class="input-group">
+        	<label>Drog magyar neve:</label>
+        	<input type="text" id="magyar-drog">
+    	</div>
+  	<div class="input-group">
+        	<label>Drog latin neve:</label>
+        	<input type="text" id="latin-drog">
+	</div>
+    	<div class="input-group">
+        	<label>Növény latin neve:</label>
+        	<input type="text" id="latin-noveny">
+    	</div>
+    	<div class="input-group">
+        	<label>Növény családja latinul:</label>
+        	<input type="text" id="csalad-noveny">
+    	</div>
+    	<button onclick="checkNoveny()">✅ Ellenőrzés</button>
+    	<button onclick="goBack()">🔙 Vissza</button>
+    	<p id="noveny-eredmeny"></p>
+    	<button onclick="ujNoveny()">Új növény</button>
+    </div>
+    <!-- Mikroszkópikus felismerés konténer -->
+    
+    <div id="mikroszkopikus-container" class="submenu">
+    	<h2>Mikroszkópikus felismerés</h2>
+    	<div id="mikro-kepek"></div>
+    	<div id="mikro-valaszok">
+            <div id="mikro-feature-dropdowns"></div>
+            <div class="input-group">
+                <label>Melyik drog szövetei láthatók?</label>
+            	<select id="mikro-drog-select"></select>
+            </div>
+    	</div>
+    	<button onclick="checkMikro()">✅ Ellenőrzés</button>
+    	<button onclick="goBack()">🔙 Vissza</button>
+    	<p id="mikro-eredmeny"></p>
+    	<button onclick="ujMikroJatek()">Új játék</button>
+    </div>
+
+	<!-- Számolási feladatok konténer -->
+    <div id="szamolas-container" class="submenu">
+        <h2 id="szamolas-cim"></h2>
+        <!-- Ide jönnek a számolási feladatok -->
+        <button onclick="goBack()">🔙 Vissza</button>
+    </div>
+
+    <!-- Táblázatkitöltés konténer -->
+    <div id="tabla-container" class="submenu">
+        <h2 id="tabla-cim"></h2>
+        <!-- Ide jönnek a táblázatok -->
+        <button onclick="goBack()">🔙 Vissza</button>
+    </div>
+	<!-- Táblázatkitöltés konténerek -->
+
+    <!-- Általános fitokémia konténer -->
+    <div id="fitokemia_altalanos-container" class="submenu">
+        <h2>Általános fitokémia</h2>
+        <div id="fitokemia_altalanos-content"></div>
+        <button onclick="checkTabla('altalanos')">✅ Ellenőrzés</button>
+        <button onclick="goBack()">🔙 Vissza</button>
+        <p id="fitokemia_altalanos-eredmeny"></p>
+    </div>
+
+<!-- Drogok fitokémiája konténer -->
+    <div id="fitokemia-container" class="submenu">
+        <h2>Drogok fitokémiája</h2>
+        <div id="fitokemia-content"></div>
+        <button onclick="checkTabla('drogok')">✅ Ellenőrzés</button>
+        <button onclick="goBack()">🔙 Vissza</button>
+        <p id="fitokemia-eredmeny"></p>
+    </div>
+
+<!-- Általános fitoanalitika konténer -->
+    <div id="fitoanalitika-container" class="submenu">
+        <h2>Általános fitoanalitika</h2>
+        <div id="fitoanalitika-content"></div>
+        <button onclick="checkTabla('analitika')">✅ Ellenőrzés</button>
+        <button onclick="goBack()">🔙 Vissza</button>
+        <p id="fitoanalitika-eredmeny"></p>
+    </div>
+	
+
+    <script>
+	const fitokemiaTablazat = [
+    	    {
+                azonositas: "keményítő",
+                reakcio: "komplexképzés",
+                reagens: "lugol-oldat",
+                eszleles: "sötétkék/fekete elszíneződés"
+    	    },
+            {
+                azonositas: "inulin vagy hidroxi-metil-furfural",
+                reakcio: "Seliwanoff",
+                reagens: "HCl, rezorcin, hő",
+                eszleles: "piros"
+            },
+            {
+                azonositas: "arabinoxilán",
+                reakcio: "Bial",
+                reagens: "HCl + orcinol + FeCl3 + hő",
+                eszleles: "türkiz"
+            },
+            {
+                azonositas: "A-vitamin",
+                reakcio: "Carr-Price",
+                reagens: "kloroform, SbCl3 kristály",
+                eszleles: "kék"
+            },
+            {
+                azonositas: "avasság (epihidrin-aldehid)",
+                reakcio: "gyűrű felnyílás",
+                reagens: "HCl, floroglucin",
+                eszleles: "vörös"
+            },
+            {
+                azonositas: "Aszkorbinsav",
+                reakcio: "redox-reakció",
+                reagens: "diklórfenol-indofenol",
+                eszleles: "fehérkioltó folt a VRK-n"
+            }
+        ];
+
+        function startTabla(jatekTipus) {
+            document.getElementById("tablaSubMenu").style.display = "none";
+            document.getElementById("tabla-container").style.display = "block";
+            document.getElementById("tabla-cim").innerText = jatekTipus;
+    
+            if(jatekTipus === "Általános fitokémia") {
+                let tablaHTML = `
+                    <table border="1" style="margin: 0 auto; width: 80%;">
+                        <thead>
+                            <tr>
+                                <th>Azonosítási reakció</th>
+                                <th>Reagens</th>
+                                <th>Észlelés</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+        
+        // Véletlenszerű sorrend és kitöltés
+                const shuffled = [...fitokemiaTablazat].sort(() => 0.5 - Math.random());
+        
+                shuffled.forEach((sor, index) => {
+                    const randomCol = Math.floor(Math.random() * 3); // 0-2 között
+                    const options = fitokemiaTablazat.map(x => 
+                        randomCol === 0 ? x.azonositas : 
+                        randomCol === 1 ? x.reagens : 
+                        x.eszleles
+                    ).filter((v, i, a) => a.indexOf(v) === i); // Egyediek
+            
+                    tablaHTML += `<tr>`;
+            
+                    for(let col = 0; col < 3; col++) {
+                        if(col === randomCol) {
+                            // Megadott érték
+                            const value = randomCol === 0 ? sor.azonositas : 
+                                 randomCol === 1 ? sor.reagens : 
+                                 sor.eszleles;
+                            tablaHTML += `<td style="background-color:#f0f0f0">${value}</td>`;
+                        } else {
+                            // Legördülő menü
+                            const colName = col === 0 ? "azonositas" : 
+                                           col === 1 ? "reagens" : "eszleles";
+                            tablaHTML += `
+                                <td>
+                                    <select id="tabla-${index}-${col}">
+                                        <option value="">Válassz...</option>
+                                        ${options.map(opt => 
+                                            `<option value="${opt}">${opt}</option>`
+                                        ).join('')}
+                                    </select>
+                                </td>`;
+                        }
+                    }
+            
+                    tablaHTML += `</tr>`;
+                });
+        
+                tablaHTML += `</tbody></table><br>
+                    <button onclick="checkTabla()">Ellenőrzés</button>`;
+        
+                document.getElementById("tabla-container").innerHTML = tablaHTML;
+            }
+        }
+
+function checkTabla() {
+    let correct = 0;
+    const shuffled = [...fitokemiaTablazat];
+    
+    shuffled.forEach((sor, rowIndex) => {
+        for(let col = 0; col < 3; col++) {
+            const select = document.getElementById(`tabla-${rowIndex}-${col}`);
+            if(select) {
+                const selected = select.value;
+                const correctValue = col === 0 ? sor.azonositas : 
+                                    col === 1 ? sor.reagens : 
+                                    sor.eszleles;
+                
+                if(selected === correctValue) {
+                    correct++;
+                    select.style.backgroundColor = "#a0ffa0";
+                } else if(selected) {
+                    select.style.backgroundColor = "#ffa0a0";
+                }
+            }
+        }
+    });
+    
+    alert(`Eredmény: ${correct} helyes válasz a ${shuffled.length * 2} lehetőségből!`);
+}	
+        const molekulaAdatok = {
+            "D-glükóz": { smiles: "OC1OC(CO)C(O)C(O)C1O", csoport: "Szénhidrátok", image: "B-D-glukoz.jpg" },
+            "D-fruktóz": { smiles: "OCC1OC(O)(CO)C(O)C1O", csoport: "Szénhidrátok", image: "B-D-fruktoz.jpg" },
+            "D-arabinóz": { smiles: "OC1C(O)C(O)C(O)OC1", csoport: "Szénhidrátok", image: "B-D-arabinoz.jpg" },
+            "szacharóz": { smiles: "OCC1OC(C(C(C1O)O)O)OC2(CO)C(O)C(O)C(O2)CO", csoport: "Szénhidrátok", image: "szacharoz.jpg" },
+            "D-ramnóz": { smiles: "CC1C(O)C(O)C(O)C(O1)O", csoport: "Szénhidrátok", image: "A-D-ramnoz.jpg" },
+            "D-xilit": { smiles: "OCC(O)C(O)C(O)CO", csoport: "Szénhidrátok", image: "D-xilit.jpg" },
+            "palmitinsav": { smiles: "CCCCCCCCCCCCCCCC(O)=O", csoport: "Lipidek", image: "palmitinsav.jpg" },
+            "sztearinsav": { smiles: "CCCCCCCCCCCCCCCCC(=O)O", csoport: "Lipidek", image: "sztearinsav.jpg" },
+            "olajsav": { smiles: "CCCCCCCCC=CCCCCCCCC(O)=O", csoport: "Lipidek", image: "olajsav.jpg" },
+            "linolsav": { smiles: "CCCCCC=CCC=CCCCCCCCC(O)=O", csoport: "Lipidek", image: "linolsav.jpg" },
+            "ricinolsav": { smiles: "CCCCCCCCC=CCCCCC(O)CC(=O)O", csoport: "Lipidek", image: "ricinolsav.jpg" },
+            "alfa-linolénsav": { smiles: "CCC=CCC=CCC=CCCCCCCCC(O)=O", csoport: "Lipidek", image: "A-linolensav.jpg" },
+            "gamma-linolénsav": { smiles: "CCCCCC=CCC=CCC=CCCCCC(O)=O", csoport: "Lipidek", image: "G-linolensav.jpg" },
+            "béta-szitoszterol": { smiles: "OC1CC=2C(C)(CC1)[CH]3[CH](CC=2)[CH]4C(C)(CC3)C(CC4)C(C)CCC(CC)C(C)C", csoport: "Lipidek", image: "B-szitoszterol.jpg" },
+            "citromsav": { smiles: "O=C(O)CC(O)(C(=O)O)CC(O)=O", csoport: "Növényi savak", image: "citromsav.jpg" },
+            "almasav": { smiles: "O=C(O)CC(O)C(=O)O", csoport: "Növényi savak", image: "almasav.jpg" },
+            "borkősav": { smiles: "OC(=O)C(O)C(O)C(=O)O", csoport: "Növényi savak", image: "borkosav.jpg" },
+            "aszkorbinsav": { smiles: "O=C1O[CH](C(CO)O)C(O)=C1O", csoport: "Növényi savak", image: "aszkorbinsav.jpg" },
+            "sikimisav": { smiles: "O=C(O)C=1CC(O)C(O)C(C=1)O", csoport: "Növényi savak", image: "sikimisav.jpg" }
+        };
+// Függvények frissítése
+	const novenyAdatok = {
+    	    "Graminis rhizoma": { magyardrog: "Tarackbúza-gyökértörzs", latin: "Agropyrons repens", csalad: "Poaceae", kep: "Graminis_rhizoma.jpg" },
+    	    "Lichen islandicus": { magyardrog: "Izlandi zuzmó", latin: "Cetraria islandica", csalad: "Parmeliaceae", kep: "Lichen_islandicus.jpg" },
+    	    "Acaciae gummi": { magyardrog: "Akáciamézga", latin: "Acacia senegal", csalad: "Fabaceae", kep: "Acaciae_gummi.jpg" },
+   	    "Althaeae folium": { magyardrog: "Orvosi ziliz levél", latin: "Althaeae officinalis", csalad: "Malvaceae", kep: "Althaeae_folium.jpg" },
+    	    "Anisi stellati fructus": { magyardrog: "Csillagánizs termés", latin: "Illicium verum", csalad: "Schisandraceae", kep: "Anisi_stellati_fructus.jpg" },
+    	    "Cucurbitae semen": { magyardrog: "Tökmag", latin: "Cucurbita pepo", csalad: "Cucurbitaceae", kep: "Cucurbitae_semen.jpg" },
+    	    "Equiseti herba": { magyardrog: "Mezei zsurló hajtás", latin: "Equisetum arvense", csalad: "Equisetaceae", kep: "Equiseti_herba.jpg" },
+     	    "Papaveris semen": { magyardrog: "Mák mag", latin: "Papaver somniferum", csalad: "Papaveraceae", kep: "Papaveris_semen.jpg" },
+    	    "Plantaginis ovatae seminis tegumentum": { magyardrog: "Útifű maghéj", latin: "Plantago ovata", csalad: "Plantaginaceae", kep: "Plantaginis_ovatae_seminis_tegumentum.jpg" },
+    	    "Ricini semen": { magyardrog: "Ricinusmag", latin: "Ricinus communis", csalad: "Euphorbiaceae", kep: "Ricini_semen.jpg" },
+   	    "Salviae hispanicae semen": { magyardrog: "Chia mag", latin: "Salvia hispanica", csalad: "Lamiaceae", kep: "Salviae_hispanicae_semen.jpg" },
+    	    "Sesami semen": { magyardrog: "Szezámmag", latin: "Sesamum indicum", csalad: "Pedaliaceae", kep: "Sesami_semen.jpg" },
+	    "Tiliae flos": { magyardrog: "Hársfa virág", latin: "Tilia cordata", csalad: "Malvaceae", kep: "Tiliae_flos.jpg" },
+	    "Tragacantha": { magyardrog: "Tragakanta gumi", latin: "Astragalus gummifer", csalad: "Fabaceae", kep: "Tragacantha.jpg" },
+	    "Trigonella foenugraeci semen": { magyardrog: "Görögszéna mag", latin: "Trigonella foenum-graecum", csalad: "Fabaceae", kep: "Trigonella_foenugraeci_semen.jpg" },
+	    "Althaeae radix": { magyardrog: "Orvosi ziliz gyökér", latin: "Althaeae officinalis", csalad: "Malvaceae", kep: "Althaeae_radix.jpg" },
+	    "Malvae folium": { magyardrog: "Mályva levél", latin: "Malva sylvestris", csalad: "Malvaceae", kep: "Malvae_folium.jpg" },
+	    "Plantaginis lanceolatae folium": { magyardrog: "Lándzsás útifű levél", latin: "Plantago lanceolata", csalad: "Plantaginaceae", kep: "Plantaginis_lanceolatae_folium.jpg" },
+	    "Psylli semen": { magyardrog: "Bolhamag", latin: "Plantago psyllium", csalad: "Plantaginaceae", kep: "Psylli_semen.jpg" },
+	    "Pulmonariae folium": { magyardrog: "Tüdőfű levél", latin: "Pulmonaria officinalis", csalad: "Boraginaceae", kep: "Pulmonariae_folium.jpg" },
+	    "Helianthi annui semen": { magyardrog: "Napraforgómag", latin: "Helianthus annuus", csalad: "Asteraceae", kep: "Helianthi_annui_semen.jpg" },
+	    "Hibisci sabdariffae flos": { magyardrog: "Hibiszkusz virág", latin: "Hibiscus sabdariffa", csalad: "Malvaceae", kep: "Hibisci_sabdariffae_flos.jpg" },
+	    "Lini semen": { magyardrog: "Lenmag", latin: "Linum usitatissimum", csalad: "Linaceae", kep: "Lini_semen.jpg" },
+	    "Malvae sylvestris flos": { magyardrog: "Erdei mályva virág", latin: "Malva sylvestris", csalad: "Malvaceae", kep: "Malvae_sylvestris_flos.jpg" },
+ 	    "Rosae pseudo-fructus": { magyardrog: "Csipkebogyó áltermés", latin: "Rosa canina", csalad: "Rosaceae", kep: "Rosae_pseudo-fructus.jpg" },
+	    "Taraxaci radix": { magyardrog: "Gyermekláncfű gyökér", latin: "Taraxacum officinale", csalad: "Asteraceae", kep: "Taraxaci_radix.jpg" },
+	    "Verbasci flos": { magyardrog: "Ökörfarkkóró virág", latin: "Verbascum thapsus", csalad: "Scrophulariaceae", kep: "Verbasci_flos.jpg" }
+	};
+	// Adatstruktúra frissítése
+const mikroKepek = [
+    "Ca-oxalát_rozetta__Althaeae_radix_pulvis.jpg",
+    "Ca-oxalát_rozetta__Malvae_sylvestris_flos.jpg",
+    "Ca-oxalát_rozetta__Rosae_pseudo-fructus.jpg",  
+    "Ca-oxalát_rozetta__Tiliae_flos.jpg", 
+    "Csészelevél__Tiliae_flos.jpg",
+    "Csillagszőr__Althaeae_folium_pulvis.jpg",
+    "Csillagszőr__Malvae_sylvestris_flos.jpg", 
+    "Csillagszőr__Tiliae_flos.jpg",  
+    "Egysejtű_fedőszőr__Verbasci_flos.jpg", 
+    "Egysejtű_fedőszőr__Malvae_sylvestris_flos.jpg",
+    "Emeletesen_elágazó_fedőszőr__Verbasci_flos.jpg",  
+    "Endospermium__Lini_semen_pulvis.jpg",
+    "Hullámos_alakú_szőr__Malvae_sylvestris_flos.jpg", 
+    "Keményítőszemcsék__Althaeae_radix_pulvis.jpg", 
+    "Lipidcseppek__Lini_semen_pulvis.jpg", 
+    "Mezofillum__Malvae_sylvestris_flos.jpg",
+    "Nyálka__Althaeae_radix_pulvis.jpg",
+    "Nyálkaepidermisz__Lini_semen_pulvis.jpg",
+    "Pigmentsejtek__Lini_semen_pulvis.jpg",
+    "Pollenszem__Althaeae_folium_pulvis.jpg",
+    "Pollenszem__Malvae_sylvestris_flos.jpg",
+    "Portok__Verbasci_flos.jpg",
+    "Rost__Althaeae_radix_pulvis.jpg",
+    "Serteszőr__Rosae_pseudo-fructus.jpg",
+    "Szklereida_sejtek__Rosae_pseudo-fructus.jpg",
+    "Trachea__Althaeae_radix_pulvis.jpg",
+    "Zsíros_olajcseppek_karotinoidokkal__Rosae_pseudo-fructus.jpg"
+];
+
+const mikroAdatok = {};
+const mikroFeatureList = new Set();
+const mikroDrogList = new Set();
+
+
+mikroKepek.forEach(kep => {
+    const [featureRaw, drogFile] = kep.split("__");
+    
+    // Feature név formázása
+    const feature = featureRaw.replace(/_/g, " ");
+    
+    // Drog név formázása
+    const cleanDrog = drogFile
+        .replace(/_pulvis/g, "")
+        .replace(/.jpg/g, "")    
+        .replace(/_/g, " ");    
+
+    if (!mikroAdatok[cleanDrog]) mikroAdatok[cleanDrog] = [];
+    mikroAdatok[cleanDrog].push({ feature, kep });
+    
+    mikroFeatureList.add(feature);
+    mikroDrogList.add(cleanDrog);
+});
+	    
+// Játék indítása
+function startMikroszkopikusJatek() {
+    document.getElementById("novenyfelismeresSubMenu").style.display = "none";
+    document.getElementById("mikroszkopikus-container").style.display = "block";
+    
+    // Véletlenszerű drog kiválasztása
+    const drogok = Object.keys(mikroAdatok);
+    currentMikroDrog = drogok[Math.floor(Math.random() * drogok.length)];
+    
+    // Képek megjelenítése
+    const kepekDiv = document.getElementById("mikro-kepek");
+    kepekDiv.innerHTML = mikroAdatok[currentMikroDrog]
+        .map(kep => `
+            <div class="kep-es-legordulo">
+                <img src="DROG1ZH1MIKROTESZT/${kep.kep}" style="max-width: 200px; margin: 10px;">
+                <select class="mikro-feature-select">
+                    <option value="">Válassz képletet...</option>
+                    ${Array.from(mikroFeatureList).map(f => `<option>${f}</option>`).join("")}
+                </select>
+            </div>
+        `).join("");
+
+    // Drog dropdown feltöltése
+    const drogSelect = document.getElementById("mikro-drog-select");
+    drogSelect.innerHTML = `
+        <option value="">Válassz drogot...</option>
+        ${Array.from(mikroDrogList).map(d => `<option>${d}</option>`).join("")}
+    `;
+}
+
+// Ellenőrzés logika javítva
+function checkMikro() {
+    const valaszSelects = document.querySelectorAll(".mikro-feature-select");
+    const drogValasz = document.getElementById("mikro-drog-select").value;
+    const helyesValaszok = mikroAdatok[currentMikroDrog].map(k => k.feature);
+
+    let eredmeny = "<strong>Eredmények:</strong><br>";
+    
+    // Képek ellenőrzése
+    valaszSelects.forEach((select, index) => {
+        const valasz = select.value;
+        const helyes = helyesValaszok[index];
+        const isCorrect = valasz === helyes;
+        
+        eredmeny += `Kép ${index+1}: ${isCorrect ? "✔️" : `❌ (helyes: ${helyes})`}<br>`;
+    });
+
+    // Drog név ellenőrzése
+    eredmeny += `<br>Drog válasz: ${drogValasz === currentMikroDrog ? "✔️" : `❌ (helyes: ${currentMikroDrog})`}`;
+
+    document.getElementById("mikro-eredmeny").innerHTML = eredmeny;
+}
+
+	
+
+function showSubMenu(type) {
+    // Minden elem elrejtése
+    const availableMenus = ['novenyfelismeres', 'kepletek', 'tabla'];
+    
+    if (!availableMenus.includes(type)) {
+        console.log("Ez a menüpont ideiglenesen nem elérhető");
+        return;
+    }
+    document.getElementById("mainMenu").style.display = "none";
+    document.getElementById("kepletekSubMenu").style.display = "none";
+    document.getElementById("novenyfelismeresSubMenu").style.display = "none";
+    document.getElementById("szamolasSubMenu").style.display = "none";
+    document.getElementById("tablaSubMenu").style.display = "none";
+    document.getElementById("sketchem-container").style.display = "none";
+    document.getElementById("kepfelismeres-container").style.display = "none";
+    document.getElementById("szamolas-container").style.display = "none"; 
+    document.getElementById("tabla-container").style.display = "none";
+    document.getElementById("makroszkopikus-container").style.display = "none"
+	
+    document.getElementById(type + "SubMenu").style.display = "block";
+}
+
+
+function startFormulaRecognition() {
+    document.getElementById("kepletekSubMenu").style.display = "none";
+    document.getElementById("kepfelismeres-container").style.display = "block";
+    newMoleculeRecognition();
+}
+
+// Új függvények a képfelismeréshez
+function newMoleculeRecognition() {
+    const moleculeNames = Object.keys(molekulaAdatok);
+    currentMolecule = moleculeNames[Math.floor(Math.random() * moleculeNames.length)];
+    document.getElementById("molekula-kep").src = "DROG1ZHMOL/" + molekulaAdatok[currentMolecule].image;
+}
+
+function checkName() {
+    const answer = document.getElementById("name-input").value.trim();
+    const result = (answer.toLowerCase() === currentMolecule.toLowerCase()) 
+        ? "✔️ Helyes" 
+        : `❌ Helytelen (helyes válasz: ${currentMolecule})`;
+    document.getElementById("name-output").innerHTML = result;
+}
+
+function retryRecognition() {
+    document.getElementById("name-input").value = "";
+    document.getElementById("name-output").innerHTML = "";
+}
+
+
+
+
+
+function ujMikroJatek() {
+    startMikroszkopikusJatek();
+    document.getElementById("mikro-eredmeny").innerHTML = "";
+}
+// Makroszkópikus játék indítása
+function startMakroszkopikusJatek() {
+    document.getElementById("novenyfelismeresSubMenu").style.display = "none";
+    document.getElementById("makroszkopikus-container").style.display = "block";
+    ujNoveny();
+}
+
+// Új növény betöltése
+function ujNoveny() {
+    const novenyNevek = Object.keys(novenyAdatok);
+    aktualisNoveny = novenyNevek[Math.floor(Math.random() * novenyNevek.length)];
+    document.getElementById("noveny-kep").src = "DROGZH1JOTESZT/" + novenyAdatok[aktualisNoveny].kep;
+    document.getElementById("magyar-drog").value = "";
+    document.getElementById("latin-drog").value = "";
+    document.getElementById("latin-noveny").value = "";
+    document.getElementById("csalad-noveny").value = "";
+    document.getElementById("noveny-eredmeny").innerHTML = "";
+}
+
+// Ellenőrzés
+function checkNoveny() {
+    const elvart = novenyAdatok[aktualisNoveny];
+    const valaszok = {
+        magyar: document.getElementById("magyar-drog").value.trim(),
+        latinDrog: document.getElementById("latin-drog").value.trim(),
+        latin: document.getElementById("latin-noveny").value.trim(),
+        csalad: document.getElementById("csalad-noveny").value.trim()
+    };
+
+    let eredmeny = "<strong>Eredmények:</strong><br>";
+    
+    function checkField(userAnswer, correctAnswer, fieldName) {
+        const isCorrect = userAnswer.toLowerCase() === correctAnswer.toLowerCase();
+        return `${fieldName}: ${isCorrect ? "✔️" : `❌ (helyes: ${correctAnswer})`}<br>`;
+    }
+
+    eredmeny += checkField(valaszok.magyar, elvart.magyardrog, "Magyar név");
+    eredmeny += checkField(valaszok.latinDrog, aktualisNoveny, "Drog latin neve");
+    eredmeny += checkField(valaszok.latin, elvart.latin, "Latin név");
+    eredmeny += checkField(valaszok.csalad, elvart.csalad, "Család");
+
+    document.getElementById("noveny-eredmeny").innerHTML = eredmeny;
+}
+        let currentMolecule = "";
+        let aktualisNoveny = "";
+	let currentMikroDrog = "";
+        
+
+     
+    	function goBack() {
+    // Minden elem elrejtése
+    	    document.getElementById("mainMenu").style.display = "block";
+            document.getElementById("kepletekSubMenu").style.display = "none";
+            document.getElementById("novenyfelismeresSubMenu").style.display = "none";
+	    document.getElementById("szamolasSubMenu").style.display = "none"; // ⬅️ Hiányzott
+    	    document.getElementById("tablaSubMenu").style.display = "none";
+            document.getElementById("sketchem-container").style.display = "none";
+            document.getElementById("kepfelismeres-container").style.display = "none";
+	    document.getElementById("szamolas-container").style.display = "none";
+    	    document.getElementById("tabla-container").style.display = "none";
+	    document.getElementById("fitokemia_altalanos-container").style.display = "none";
+   	    document.getElementById("fitokemia-container").style.display = "none";
+   	    document.getElementById("fitoanalitika-container").style.display = "none";
+	    document.getElementById("makroszkopikus-container").style.display = "none";
+	    document.getElementById("mikroszkopikus-container").style.display = "none";
+	}
+        
+        function startFormulaDrawing() {
+            document.getElementById("kepletekSubMenu").style.display = "none";
+            document.getElementById("sketchem-container").style.display = "block";
+            newMolecule();  // új molekula kiválasztása
+        }
+
+        function openSketChem() {
+            window.open("https://itayyaakov.github.io/SketChem/");
+        }
+
+        function exportSMILES() {
+            const smilesCode = document.getElementById("smiles-input").value.trim();
+            const selectedCsoport = document.getElementById("csoport-select").value;
+
+            if (smilesCode && selectedCsoport) {
+                const molekula = molekulaAdatok[currentMolecule];
+                const isSmilesCorrect = smilesCode === molekula.smiles;
+                const isCsoportCorrect = selectedCsoport === molekula.csoport;
+
+                let resultText = `SMILES: ${isSmilesCorrect ? "✔️ Helyes" : "❌ Helytelen"}<br>`;
+                resultText += `Csoport: ${isCsoportCorrect ? "✔️ Helyes" : "❌ Helytelen"}`;
+
+                document.getElementById("smiles-output").innerHTML = resultText;
+            } else {
+                alert("Töltse ki az összes mezőt!");
+            }
+        }
+
+        function newMolecule() {
+            const moleculeNames = Object.keys(molekulaAdatok);
+            currentMolecule = moleculeNames[Math.floor(Math.random() * moleculeNames.length)];
+            document.getElementById("molekula-name").innerText = currentMolecule;
+        }
+
+        function retry() {
+            document.getElementById("smiles-input").value = "";
+            document.getElementById("smiles-output").innerHTML = "";
+        }
+	    // Számolási feladatok indítása
+	    
+function startSzamolas(jatekTipus) {
+    document.getElementById("szamolasSubMenu").style.display = "none";
+    document.getElementById("szamolas-container").style.display = "block";
+    document.getElementById("szamolas-cim").innerText = jatekTipus;
+}
+
+// Táblázatkitöltés indítása
+function startTabla(jatekTipus) {
+    document.getElementById("tablaSubMenu").style.display = "none";
+    document.getElementById("tabla-container").style.display = "block";
+    document.getElementById("tabla-cim").innerText = jatekTipus;
+}
+    </script>
+</body>
+</html>
