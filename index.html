@@ -166,8 +166,7 @@
 
 
     <script>
-	
-const osszesCsoport = [...new Set(Object.values(molekulaAdatok).map(m => m.csoport))];           
+	           
 const molekulaAdatok = {
     "rozmaringsav": { csoport: "Kávésavszármazékok", image: "rozmaringsav.jpg" },
     "klorogénsav": { csoport: "Kávésavszármazékok", image: "klorogénsav.jpg" },
@@ -208,6 +207,8 @@ const molekulaAdatok = {
     "szennozid B": { csoport: "Antraglikozidok, naftodiantronok", image: "szennozid_B.jpg" },
     "hipericin": { csoport: "Antraglikozidok, naftodiantronok", image: "hipericin.jpg" },
 }
+
+const osszesCsoport = [...new Set(Object.values(molekulaAdatok).map(m => m.csoport))];
 // Függvények frissítése
 	const novenyAdatok = {
 	    "Tiliae flos": { magyardrog: "Hársfa virág", latin: "Tilia cordata", csalad: "Malvaceae", kep: "Tiliae_flos.jpg" },
