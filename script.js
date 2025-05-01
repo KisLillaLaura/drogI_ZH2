@@ -78,7 +78,7 @@ const novenyAdatok = {
     "Alchemillae herba": { magyardrog: "Réti palástfű", latin: "Alchemilla vulgaris", csalad: "Rosaceae", kep: "Alchemillae_herba.jpg" },
     "Aloe capensis": { magyardrog: "Tövises aloé", latin: "Aloe ferox", csalad: "Asphodelaceae", kep: "Aloe_capensis.jpg" },
     "Frangulae cortex": { magyardrog: "Kutyabengekéreg", latin: "Rhamnus frangula", csalad: "Rhamnaceae", kep: "Frangulae_cortex.jpg" },
-    "Ratanhiae radix": { magyardrog: "Ratanhia gyökér", latin: "Krameria lappacea", csalad: "Krameriaceae", kep: "Ratanhiae_radix.jpg" }
+    "Ratanhiae radix": { magyardrog: "Ratanhia gyökér", latin: "Krameria lappacea", csalad: "Krameriaceae", kep: "Ratanhiae_radix.jpg" },
     "Cotini folium": { magyardrog: "Cserszömörce levél", latin: "Cotinus coggygria", csalad: "Anacardiaceae", kep: "Cotini_folium.jpg" },
     "Sennae foliolum": { magyardrog: "Szenna levélke", latin: "Senna alexandrina", csalad: "Fabaceae", kep: "Sennae_foliolum.jpg" }
 };
